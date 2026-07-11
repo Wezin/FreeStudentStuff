@@ -4,6 +4,7 @@ import {
   SquaresFour,
   ListBullets,
   Tray,
+  LinkSimple,
   SignOut,
 } from "@phosphor-icons/react/ssr";
 import { logoutAdmin } from "@/features/admin/actions";
@@ -12,6 +13,7 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Dashboard", icon: SquaresFour },
   { href: "/admin#listings", label: "Listings", icon: ListBullets },
   { href: "/admin#submissions", label: "Submissions", icon: Tray },
+  { href: "/admin/import", label: "Import", icon: LinkSimple },
 ];
 
 export function AdminShell({ children }: { children: React.ReactNode }) {

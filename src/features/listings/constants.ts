@@ -45,7 +45,17 @@ export const INITIAL_TAGS = [
   "uOttawa",
   "Algonquin",
   "Ottawa-wide",
+  "Online",
 ];
+
+// Fixed, curated set for the homepage's top filter pill row (in addition to
+// "All", which TagPills prepends automatically). Deliberately NOT derived
+// from the full set of tags in use across listings — that list grows every
+// time a listing (or the AI importer, which tags fairly liberally) introduces
+// a new specific tag like "Immigration" or "Networking", and the pill row
+// should stay short and stable regardless. Edit this list directly to change
+// what shows up.
+export const BROWSE_FILTER_TAGS = ["Events", "Deals", "Free Food", "Opportunities", "Scholarships"];
 
 export function listingTypeLabel(value: ListingType): string {
   return LISTING_TYPES.find((t) => t.value === value)?.label ?? value;

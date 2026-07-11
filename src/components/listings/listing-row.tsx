@@ -45,7 +45,7 @@ export function ListingRow({ title, listings, onSeeAll }: ListingRowProps) {
           className="scrollbar-none flex gap-3 overflow-x-auto px-4 pb-1 sm:px-6"
         >
           {listings.map((listing) => (
-            <ListingCard key={listing.id} listing={listing} />
+            <ListingCard key={listing.id} listing={listing} sectionId={title} />
           ))}
         </div>
 

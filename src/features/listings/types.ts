@@ -33,3 +33,23 @@ export type ListingFilters = {
   listingType?: ListingType | "all";
   time?: TimeFilter;
 };
+
+// Shared with the link importer's confidence indicator. Lives here (not in
+// lib/import/, which is server-only) so the admin form — a client
+// component — can safely import the type.
+export type ImportFieldKey =
+  | "title"
+  | "description"
+  | "location"
+  | "starts_at"
+  | "ends_at"
+  | "image_url"
+  | "tags"
+  | "establishment_name";
+
+export type ImportConfidence = {
+  checks: Record<ImportFieldKey, boolean>;
+  found: number;
+  total: number;
+  score: number;
+};

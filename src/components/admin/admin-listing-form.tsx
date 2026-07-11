@@ -8,13 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { TagInput } from "./tag-input";
 import { EstablishmentPicker } from "./establishment-picker";
+import { CheckCircle } from "@phosphor-icons/react";
 import {
   CTA_LABEL_SUGGESTIONS,
   DEFAULT_CTA_LABEL,
   LISTING_TYPES,
 } from "@/features/listings/constants";
 import type { ListingActionState } from "@/features/listings/actions";
-import type { Listing, ListingType } from "@/features/listings/types";
+import type { ImportConfidence, Listing, ListingType } from "@/features/listings/types";
 import { cn } from "@/lib/utils";
 
 const initialState: ListingActionState = { error: null };
@@ -32,13 +33,46 @@ function FieldError({ message }: { message?: string }) {
   return <p className="text-xs text-destructive">{message}</p>;
 }
 
+/** Shown next to a label when this form is prefilled from the link
+ *  importer, so the admin can see at a glance what was found automatically. */
+function FoundBadge({ found }: { found?: boolean }) {
+  if (found === undefined) return null;
+  return found ? (
+    <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-medium text-primary">
+      <CheckCircle className="size-3" weight="fill" />
+      Auto-filled
+    </span>
+  ) : (
+    <span className="rounded-full bg-muted px-2 py-0.5 text-[11px] font-medium text-muted-foreground">
+      Not found
+    </span>
+  );
+}
+
 type AdminListingFormProps = {
   action: (state: ListingActionState, formData: FormData) => Promise<ListingActionState>;
-  listing?: Listing;
+  listing?: Partial<Listing>;
   tagSuggestions: string[];
+  /** True when `listing.thumbnail_url` is an external URL that hasn't been
+   *  uploaded to our storage yet (a link-importer preview) — saving will
+   *  re-host it server-side instead of treating it as already-stored. */
+  thumbnailIsExternal?: boolean;
+  /** Renders "Save as Pending" / "Save & Approve" instead of one submit
+   *  button — used by the link importer's review step. */
+  showApprovalActions?: boolean;
+  /** Per-field found/missing indicators from the link importer. Omit for
+   *  the plain manual add/edit flow (no badges render). */
+  fieldConfidence?: ImportConfidence["checks"];
 };
 
-export function AdminListingForm({ action, listing, tagSuggestions }: AdminListingFormProps) {
+export function AdminListingForm({
+  action,
+  listing,
+  tagSuggestions,
+  thumbnailIsExternal = false,
+  showApprovalActions = false,
+  fieldConfidence,
+}: AdminListingFormProps) {
   const [state, formAction, isPending] = useActionState(action, initialState);
   const [listingType, setListingType] = useState<ListingType>(listing?.listing_type ?? "event");
   const [hasDeadline, setHasDeadline] = useState(
@@ -57,13 +91,19 @@ export function AdminListingForm({ action, listing, tagSuggestions }: AdminListi
     <form action={formAction} className="max-w-2xl space-y-8">
       <section className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="title">Title</Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="title">Title</Label>
+            <FoundBadge found={fieldConfidence?.title} />
+          </div>
           <Input id="title" name="title" defaultValue={listing?.title} required />
           <FieldError message={state.fieldErrors?.title} />
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="description">Description</Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="description">Description</Label>
+            <FoundBadge found={fieldConfidence?.description} />
+          </div>
           <Textarea
             id="description"
             name="description"
@@ -75,7 +115,10 @@ export function AdminListingForm({ action, listing, tagSuggestions }: AdminListi
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="location">Location (optional)</Label>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="location">Location (optional)</Label>
+            <FoundBadge found={fieldConfidence?.location} />
+          </div>
           <Input id="location" name="location" defaultValue={listing?.location ?? ""} />
         </div>
       </section>
@@ -106,7 +149,10 @@ export function AdminListingForm({ action, listing, tagSuggestions }: AdminListi
         {listingType === "event" ? (
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <Label htmlFor="starts_at">Start date</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="starts_at">Start date</Label>
+                <FoundBadge found={fieldConfidence?.starts_at} />
+              </div>
               <Input
                 id="starts_at"
                 name="starts_at"
@@ -115,7 +161,10 @@ export function AdminListingForm({ action, listing, tagSuggestions }: AdminListi
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="ends_at">End date</Label>
+              <div className="flex items-center gap-2">
+                <Label htmlFor="ends_at">End date</Label>
+                <FoundBadge found={fieldConfidence?.ends_at} />
+              </div>
               <Input
                 id="ends_at"
                 name="ends_at"
@@ -146,13 +195,23 @@ export function AdminListingForm({ action, listing, tagSuggestions }: AdminListi
       </section>
 
       <section className="space-y-2 border-t border-border pt-6">
-        <Label>Tags</Label>
+        <div className="flex items-center gap-2">
+          <Label>Tags</Label>
+          <FoundBadge found={fieldConfidence?.tags} />
+        </div>
         <TagInput name="tags" defaultValue={listing?.tags ?? []} suggestions={tagSuggestions} />
       </section>
 
       <section className="space-y-2 border-t border-border pt-6">
-        <Label htmlFor="thumbnail">Thumbnail</Label>
-        <input type="hidden" name="existing_thumbnail_url" value={listing?.thumbnail_url ?? ""} />
+        <div className="flex items-center gap-2">
+          <Label htmlFor="thumbnail">Thumbnail</Label>
+          <FoundBadge found={fieldConfidence?.image_url} />
+        </div>
+        <input
+          type="hidden"
+          name={thumbnailIsExternal ? "thumbnail_source_url" : "existing_thumbnail_url"}
+          value={listing?.thumbnail_url ?? ""}
+        />
         <input
           id="thumbnail"
           name="thumbnail"
@@ -161,6 +220,12 @@ export function AdminListingForm({ action, listing, tagSuggestions }: AdminListi
           onChange={handleThumbnailChange}
           className="block w-full text-sm text-muted-foreground file:mr-3 file:rounded-full file:border-0 file:bg-secondary file:px-4 file:py-2 file:text-sm file:font-medium file:text-secondary-foreground hover:file:bg-muted"
         />
+        {thumbnailIsExternal && (
+          <p className="text-xs text-muted-foreground">
+            Using the image found at the source link — it&apos;ll be saved to our own storage.
+            Upload a file above to replace it.
+          </p>
+        )}
         <FieldError message={state.fieldErrors?.thumbnail} />
         {thumbnailPreview && (
           <div className="relative mt-2 aspect-video w-full max-w-xs overflow-hidden rounded-xl bg-muted">
@@ -170,6 +235,11 @@ export function AdminListingForm({ action, listing, tagSuggestions }: AdminListi
       </section>
 
       <section className="border-t border-border pt-6">
+        {fieldConfidence && (
+          <div className="mb-2 flex items-center gap-2">
+            <FoundBadge found={fieldConfidence.establishment_name} />
+          </div>
+        )}
         <EstablishmentPicker
           defaultEstablishmentId={listing?.establishment_id}
           defaultEstablishmentName={listing?.establishment_name}
@@ -213,13 +283,36 @@ export function AdminListingForm({ action, listing, tagSuggestions }: AdminListi
 
       {state.error && <p className="text-sm text-destructive">{state.error}</p>}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
-      >
-        {isPending ? "Saving..." : listing ? "Save changes" : "Create listing"}
-      </button>
+      {showApprovalActions ? (
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="submit"
+            name="requested_status"
+            value="draft"
+            disabled={isPending}
+            className="inline-flex items-center justify-center rounded-full border border-input px-6 py-2.5 text-sm font-medium text-foreground transition hover:bg-muted disabled:opacity-60"
+          >
+            {isPending ? "Saving..." : "Save as pending"}
+          </button>
+          <button
+            type="submit"
+            name="requested_status"
+            value="published"
+            disabled={isPending}
+            className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+          >
+            {isPending ? "Saving..." : "Save & approve"}
+          </button>
+        </div>
+      ) : (
+        <button
+          type="submit"
+          disabled={isPending}
+          className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90 disabled:opacity-60"
+        >
+          {isPending ? "Saving..." : listing ? "Save changes" : "Create listing"}
+        </button>
+      )}
     </form>
   );
 }

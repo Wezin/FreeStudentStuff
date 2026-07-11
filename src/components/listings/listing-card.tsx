@@ -16,12 +16,18 @@ type ListingCardProps = {
   /** Fill the width of the parent grid cell instead of using a fixed card width. */
   fluid?: boolean;
   className?: string;
+  /** Distinguishes this card's shared layout animation from other cards for
+   *  the same listing rendered elsewhere on the page (e.g. the same listing
+   *  can appear in more than one tag row) — Framer Motion only shows one of
+   *  several simultaneously-mounted elements sharing a layoutId, so each
+   *  row/section must give its cards a distinct one. */
+  sectionId?: string;
 };
 
-export function ListingCard({ listing, size = "default", fluid = false, className }: ListingCardProps) {
+export function ListingCard({ listing, size = "default", fluid = false, className, sectionId = "default" }: ListingCardProps) {
   const [open, setOpen] = useState(false);
   const timeBadge = getTimeBadge(listing);
-  const mediaLayoutId = `card-media-${listing.id}`;
+  const mediaLayoutId = `card-media-${sectionId}-${listing.id}`;
 
   const titleRef = useRef<HTMLHeadingElement>(null);
   const [overflowPx, setOverflowPx] = useState(0);

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { requireAdmin } from "@/features/admin/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { uploadListingThumbnail } from "@/lib/supabase/storage";
+import { uploadListingThumbnail, uploadListingThumbnailFromUrl } from "@/lib/supabase/storage";
 import { listingFormSchema, listingIdSchema } from "./schema";
 import { slugExists } from "./queries";
 import { slugify } from "./utils";
@@ -58,6 +58,46 @@ function getThumbnailFile(formData: FormData): File | null {
   return file instanceof File && file.size > 0 ? file : null;
 }
 
+/** "draft" (pending) or "published" (approved) — defaults to draft so the
+ *  plain manual-add form (which never sets this field) is unaffected. */
+function getRequestedStatus(formData: FormData): "draft" | "published" {
+  return formData.get("requested_status") === "published" ? "published" : "draft";
+}
+
+/**
+ * Resolves the thumbnail to store, in priority order: a freshly uploaded
+ * file, an external URL to re-host (from the link importer), or — on
+ * update only — the listing's existing already-uploaded thumbnail.
+ */
+async function resolveThumbnailUrl(
+  formData: FormData,
+  existingThumbnailUrl?: string,
+): Promise<{ url: string } | { fieldError: string }> {
+  const file = getThumbnailFile(formData);
+  if (file) {
+    try {
+      return { url: await uploadListingThumbnail(file) };
+    } catch (err) {
+      return { fieldError: err instanceof Error ? err.message : "Failed to upload thumbnail." };
+    }
+  }
+
+  const sourceUrl = formData.get("thumbnail_source_url");
+  if (typeof sourceUrl === "string" && sourceUrl.trim()) {
+    try {
+      return { url: await uploadListingThumbnailFromUrl(sourceUrl.trim()) };
+    } catch (err) {
+      return { fieldError: err instanceof Error ? err.message : "Failed to import thumbnail." };
+    }
+  }
+
+  if (existingThumbnailUrl) {
+    return { url: existingThumbnailUrl };
+  }
+
+  return { fieldError: "A thumbnail image is required" };
+}
+
 export async function createListing(
   _prevState: ListingActionState,
   formData: FormData,
@@ -69,19 +109,12 @@ export async function createListing(
     return { error: "Please fix the highlighted fields.", fieldErrors: flattenFieldErrors(parsed.error) };
   }
 
-  const thumbnailFile = getThumbnailFile(formData);
-  if (!thumbnailFile) {
+  const thumbnail = await resolveThumbnailUrl(formData);
+  if ("fieldError" in thumbnail) {
     return {
       error: "Please fix the highlighted fields.",
-      fieldErrors: { thumbnail: "A thumbnail image is required" },
+      fieldErrors: { thumbnail: thumbnail.fieldError },
     };
-  }
-
-  let thumbnailUrl: string;
-  try {
-    thumbnailUrl = await uploadListingThumbnail(thumbnailFile);
-  } catch (err) {
-    return { error: err instanceof Error ? err.message : "Failed to upload thumbnail." };
   }
 
   const slug = await uniqueSlugFor(parsed.data.title);
@@ -89,8 +122,8 @@ export async function createListing(
   const { error } = await supabase.from("listings").insert({
     ...parsed.data,
     slug,
-    thumbnail_url: thumbnailUrl,
-    status: "draft",
+    thumbnail_url: thumbnail.url,
+    status: getRequestedStatus(formData),
   });
 
   if (error) {
@@ -115,22 +148,15 @@ export async function updateListing(
     return { error: "Please fix the highlighted fields.", fieldErrors: flattenFieldErrors(parsed.error) };
   }
 
-  const thumbnailFile = getThumbnailFile(formData);
   const existingThumbnailUrl = formData.get("existing_thumbnail_url");
-
-  let thumbnailUrl: string;
-  if (thumbnailFile) {
-    try {
-      thumbnailUrl = await uploadListingThumbnail(thumbnailFile);
-    } catch (err) {
-      return { error: err instanceof Error ? err.message : "Failed to upload thumbnail." };
-    }
-  } else if (typeof existingThumbnailUrl === "string" && existingThumbnailUrl) {
-    thumbnailUrl = existingThumbnailUrl;
-  } else {
+  const thumbnail = await resolveThumbnailUrl(
+    formData,
+    typeof existingThumbnailUrl === "string" ? existingThumbnailUrl : undefined,
+  );
+  if ("fieldError" in thumbnail) {
     return {
       error: "Please fix the highlighted fields.",
-      fieldErrors: { thumbnail: "A thumbnail image is required" },
+      fieldErrors: { thumbnail: thumbnail.fieldError },
     };
   }
 
@@ -138,7 +164,7 @@ export async function updateListing(
   const supabase = createAdminClient();
   const { error } = await supabase
     .from("listings")
-    .update({ ...parsed.data, slug, thumbnail_url: thumbnailUrl })
+    .update({ ...parsed.data, slug, thumbnail_url: thumbnail.url })
     .eq("id", id);
 
   if (error) {
