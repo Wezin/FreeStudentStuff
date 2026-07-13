@@ -79,7 +79,7 @@ const responseJsonSchema = z.toJSONSchema(extractionSchema);
 
 export type LlmExtraction = z.infer<typeof extractionSchema>;
 
-function stripHtmlToText(html: string): string {
+export function stripHtmlToText(html: string): string {
   return html
     .replace(/<script[\s\S]*?<\/script>/gi, " ")
     .replace(/<style[\s\S]*?<\/style>/gi, " ")

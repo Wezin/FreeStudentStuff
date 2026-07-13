@@ -13,6 +13,11 @@ import type { ListingStatus } from "./types";
 export type ListingActionState = {
   error: string | null;
   fieldErrors?: Record<string, string>;
+  /** Set on a successful non-redirecting save (see saveListingDraft) so a
+   *  caller with no other way to observe a "use server" action's outcome
+   *  (createListing/updateListing signal success via redirect instead) can
+   *  react to it — e.g. the page scanner returning to its candidate list. */
+  success?: boolean;
 };
 
 async function uniqueSlugFor(title: string, excludeId?: string): Promise<string> {
@@ -98,12 +103,7 @@ async function resolveThumbnailUrl(
   return { fieldError: "A thumbnail image is required" };
 }
 
-export async function createListing(
-  _prevState: ListingActionState,
-  formData: FormData,
-): Promise<ListingActionState> {
-  await requireAdmin();
-
+async function insertListing(formData: FormData): Promise<{ id: string } | ListingActionState> {
   const parsed = parseListingForm(formData);
   if (!parsed.success) {
     return { error: "Please fix the highlighted fields.", fieldErrors: flattenFieldErrors(parsed.error) };
@@ -119,20 +119,61 @@ export async function createListing(
 
   const slug = await uniqueSlugFor(parsed.data.title);
   const supabase = createAdminClient();
-  const { error } = await supabase.from("listings").insert({
-    ...parsed.data,
-    slug,
-    thumbnail_url: thumbnail.url,
-    status: getRequestedStatus(formData),
-  });
+  const { data, error } = await supabase
+    .from("listings")
+    .insert({
+      ...parsed.data,
+      slug,
+      thumbnail_url: thumbnail.url,
+      status: getRequestedStatus(formData),
+    })
+    .select("id")
+    .single();
 
   if (error) {
     return { error: error.message };
   }
 
+  return { id: data.id as string };
+}
+
+export async function createListing(
+  _prevState: ListingActionState,
+  formData: FormData,
+): Promise<ListingActionState> {
+  await requireAdmin();
+
+  const result = await insertListing(formData);
+  if ("error" in result) {
+    return result;
+  }
+
   revalidatePath("/admin");
   revalidatePath("/");
   redirect("/admin");
+}
+
+/**
+ * Non-redirecting variant of createListing — used where the caller needs to
+ * stay on the page after a save instead of navigating to /admin (the page
+ * scanner's per-candidate review form: save one, then return to the
+ * candidate list to review the next, rather than getting bounced away).
+ * Reuses the exact same validation/thumbnail/slug/draft-status logic.
+ */
+export async function saveListingDraft(
+  _prevState: ListingActionState,
+  formData: FormData,
+): Promise<ListingActionState> {
+  await requireAdmin();
+
+  const result = await insertListing(formData);
+  if ("error" in result) {
+    return result;
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/");
+  return { error: null, success: true };
 }
 
 export async function updateListing(

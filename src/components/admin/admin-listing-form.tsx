@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useState, type ChangeEvent } from "react";
+import { useActionState, useEffect, useState, type ChangeEvent } from "react";
 import Image from "next/image";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -63,6 +63,12 @@ type AdminListingFormProps = {
   /** Per-field found/missing indicators from the link importer. Omit for
    *  the plain manual add/edit flow (no badges render). */
   fieldConfidence?: ImportConfidence["checks"];
+  /** Called after a successful save when `action` doesn't redirect (e.g.
+   *  saveListingDraft) — createListing/updateListing signal success via
+   *  redirect instead, so this never fires for those. Used by callers that
+   *  need to stay on the page, like the page scanner returning to its
+   *  candidate list after saving one. */
+  onSaved?: () => void;
 };
 
 export function AdminListingForm({
@@ -72,8 +78,14 @@ export function AdminListingForm({
   thumbnailIsExternal = false,
   showApprovalActions = false,
   fieldConfidence,
+  onSaved,
 }: AdminListingFormProps) {
   const [state, formAction, isPending] = useActionState(action, initialState);
+
+  useEffect(() => {
+    if (state.success) onSaved?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.success]);
   const [listingType, setListingType] = useState<ListingType>(listing?.listing_type ?? "event");
   const [hasDeadline, setHasDeadline] = useState(
     listing?.listing_type === "deal" ? Boolean(listing?.ends_at) : false,

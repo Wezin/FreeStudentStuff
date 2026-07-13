@@ -1,4 +1,5 @@
 import "server-only";
+import { findBestImage } from "./find-image";
 
 export type ExtractedListingDraft = {
   title: string | null;
@@ -163,7 +164,6 @@ function extractFromBasicHtml(html: string): Partial<ExtractedListingDraft> {
   const h1 = html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i)?.[1];
   const description = html.match(/<meta\s+name=["']description["']\s+content=["']([^"']*)["']/i)?.[1];
   const timeDatetime = html.match(/<time[^>]+datetime=["']([^"']+)["']/i)?.[1];
-  const img = html.match(/<img[^>]+src=["']([^"']+)["']/i)?.[1];
 
   const stripTags = (s?: string) => (s ? decodeEntities(s.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ")) : null);
 
@@ -171,7 +171,7 @@ function extractFromBasicHtml(html: string): Partial<ExtractedListingDraft> {
     title: firstNonEmpty(stripTags(h1), stripTags(title)),
     description: description ? decodeEntities(description) : null,
     starts_at: toIsoOrNull(timeDatetime),
-    image_url: img ?? null,
+    image_url: findBestImage(html),
   };
 }
 

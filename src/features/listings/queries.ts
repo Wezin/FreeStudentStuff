@@ -131,6 +131,19 @@ export async function slugExists(slug: string, excludeId?: string): Promise<bool
   return !!data;
 }
 
+/** Every listing's source URL — powers the page scanner's duplicate
+ *  detection. Fetches the full (small) set rather than filtering by exact
+ *  URL match, since the caller needs to compare normalized URLs (a
+ *  candidate's raw link vs. the possibly-redirected URL that got saved) —
+ *  see normalizeUrlForDedup in scan-actions.ts. */
+export async function getAllListingSourceUrls(): Promise<string[]> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.from("listings").select("source_url");
+  if (error) throw error;
+
+  return (data ?? []).map((row) => row.source_url as string);
+}
+
 /** Distinct tags across all listings, most-used first — powers the tag picker/pills. */
 export async function getAllTags(): Promise<string[]> {
   const supabase = createAdminClient();
