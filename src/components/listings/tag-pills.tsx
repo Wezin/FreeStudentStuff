@@ -16,9 +16,9 @@ export function TagPills({ tags, active, onSelect }: TagPillsProps) {
     <GlassSurface
       cornerRadius={999}
       padding="0.375rem"
-      className="flex w-fit max-w-full items-center"
+      className="flex flex-1 min-w-0 items-center max-w-full"
     >
-      <div className="scrollbar-none flex max-w-full items-center gap-1 overflow-x-auto">
+      <div className="scrollbar-none flex w-full min-w-0 items-center gap-1 overflow-x-auto">
         {items.map((item) => {
           const isActive = active === item;
           return (

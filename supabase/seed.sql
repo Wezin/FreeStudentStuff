@@ -233,7 +233,7 @@ insert into listings (
   'https://example.com/opportunities/resume-review',
   'Learn More', null, 'Ottawa Career Collective',
   'published', false
-)
+),
 on conflict (slug) do nothing;
 
 -- Admin login is configured via the ADMIN_PASSWORD / ADMIN_PASSWORD_SECRET
