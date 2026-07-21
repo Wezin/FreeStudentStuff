@@ -1,21 +1,8 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { Funnel } from "@phosphor-icons/react";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-  SheetTrigger,
-} from "@/components/ui/sheet";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { TooltipButton } from "@/components/ui/tooltip-button";
 import { LISTING_TYPES, TIME_FILTERS } from "@/features/listings/constants";
@@ -28,6 +15,31 @@ type FilterSheetProps = {
   onTimeChange: (value: string) => void;
 };
 
+function FilterPill({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "rounded-full px-3 py-1.5 text-sm font-medium transition whitespace-nowrap",
+        active
+          ? "bg-primary text-primary-foreground"
+          : "text-muted-foreground hover:bg-muted hover:text-foreground",
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
 export function FilterSheet({
   listingType,
   time,
@@ -37,15 +49,15 @@ export function FilterSheet({
   const activeCount = (listingType !== "all" ? 1 : 0) + (time !== "all" ? 1 : 0);
 
   return (
-    <Sheet>
+    <Popover>
       <TooltipButton label="Filters">
         <span className="contents">
-          <SheetTrigger asChild>
+          <PopoverTrigger asChild>
             <button
               type="button"
               aria-label="Filters"
               className={cn(
-                "relative flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-background/70 text-foreground backdrop-blur-xl transition hover:bg-muted",
+                "relative flex size-11.5 shrink-0 items-center justify-center rounded-full border border-border bg-background/70 text-foreground backdrop-blur-xl transition hover:bg-muted",
               )}
             >
               <Funnel className="size-4" />
@@ -55,47 +67,45 @@ export function FilterSheet({
                 </span>
               )}
             </button>
-          </SheetTrigger>
+          </PopoverTrigger>
         </span>
       </TooltipButton>
-      <SheetContent side="right" className="border-border">
-        <SheetHeader>
-          <SheetTitle>Filters</SheetTitle>
-          <SheetDescription>Narrow results by type or time.</SheetDescription>
-        </SheetHeader>
-
-        <div className="space-y-5 px-4">
+      <PopoverContent align="end" className="w-64">
+        <div className="space-y-4">
           <div className="space-y-2">
             <Label>Type</Label>
-            <Select value={listingType} onValueChange={onListingTypeChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Type" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Types</SelectItem>
-                {LISTING_TYPES.map((t) => (
-                  <SelectItem key={t.value} value={t.value}>
-                    {t.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap gap-1">
+              <FilterPill
+                active={listingType === "all"}
+                onClick={() => onListingTypeChange("all")}
+              >
+                All Types
+              </FilterPill>
+              {LISTING_TYPES.map((type) => (
+                <FilterPill
+                  key={type.value}
+                  active={listingType === type.value}
+                  onClick={() => onListingTypeChange(type.value)}
+                >
+                  {type.label}
+                </FilterPill>
+              ))}
+            </div>
           </div>
 
           <div className="space-y-2">
             <Label>Time</Label>
-            <Select value={time} onValueChange={onTimeChange}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Time" />
-              </SelectTrigger>
-              <SelectContent>
-                {TIME_FILTERS.map((t) => (
-                  <SelectItem key={t.value} value={t.value}>
-                    {t.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex flex-wrap gap-1">
+              {TIME_FILTERS.map((filter) => (
+                <FilterPill
+                  key={filter.value}
+                  active={time === filter.value}
+                  onClick={() => onTimeChange(filter.value)}
+                >
+                  {filter.label}
+                </FilterPill>
+              ))}
+            </div>
           </div>
 
           {activeCount > 0 && (
@@ -111,7 +121,7 @@ export function FilterSheet({
             </button>
           )}
         </div>
-      </SheetContent>
-    </Sheet>
+      </PopoverContent>
+    </Popover>
   );
 }
