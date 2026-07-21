@@ -62,13 +62,15 @@ export function BrowseFilters({ tags, events, deals, query = "" }: BrowseFilters
     <div className="space-y-6">
       <div className="flex items-center gap-2 px-4 sm:px-6">
         <TagPills tags={tags} active={pillActive} onSelect={handlePillSelect} />
-        <SchoolFilterSelect value={schoolValue} onChange={handleSchoolSelect} />
-        <FilterSheet
-          listingType={listingType}
-          time={time}
-          onListingTypeChange={setListingType}
-          onTimeChange={(v) => setTime(v as TimeFilter)}
-        />
+        <div className="ml-auto flex shrink-0 items-center gap-2">
+          <SchoolFilterSelect value={schoolValue} onChange={handleSchoolSelect} />
+          <FilterSheet
+            listingType={listingType}
+            time={time}
+            onListingTypeChange={setListingType}
+            onTimeChange={(v) => setTime(v as TimeFilter)}
+          />
+        </div>
       </div>
 
       <AnimatePresence mode="wait">

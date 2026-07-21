@@ -57,7 +57,7 @@ export function FilterSheet({
               type="button"
               aria-label="Filters"
               className={cn(
-                "relative flex size-11.5 shrink-0 items-center justify-center rounded-full border border-border bg-background/70 text-foreground backdrop-blur-xl transition hover:bg-muted",
+                "relative flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-background/70 text-foreground backdrop-blur-xl transition hover:bg-muted",
               )}
             >
               <Funnel className="size-4" />

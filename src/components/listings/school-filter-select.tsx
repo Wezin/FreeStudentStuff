@@ -45,12 +45,13 @@ export function SchoolFilterSelect({ value, onChange, className }: SchoolFilterS
   const ariaLabel = isActive ? `School: ${value}` : "All schools";
 
   return (
-    <GlassSurface cornerRadius={999} padding="0.375rem" className={cn("shrink-0", className)}>
+    <GlassSurface cornerRadius={999} padding="0.25rem" className={cn("shrink-0", className)}>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger
+          size="sm"
           aria-label={ariaLabel}
           className={cn(
-            "h-auto w-auto shrink-0 gap-1 rounded-full border-0 bg-transparent px-3.5 py-1.5 text-sm font-medium shadow-none transition-colors dark:bg-transparent dark:hover:bg-transparent",
+            "h-7 w-auto shrink-0 gap-1 rounded-full border-0 bg-transparent px-3 py-0 text-sm font-medium shadow-none transition-colors dark:bg-transparent dark:hover:bg-transparent",
             isActive
               ? "bg-primary text-primary-foreground [&_svg]:text-primary-foreground/70"
               : "text-muted-foreground hover:text-foreground",
