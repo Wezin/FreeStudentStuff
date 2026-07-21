@@ -6,23 +6,26 @@ import { TagPills } from "./tag-pills";
 import { FilterSheet } from "./filter-sheet";
 import { ListingRow } from "./listing-row";
 import { ListingGrid } from "./listing-grid";
+import { ListingSection } from "./listing-section";
+import { SchoolFilterSelect } from "./school-filter-select";
 import { searchListings } from "@/features/listings/search-action";
+import { SCHOOL_FILTER_TAGS } from "@/features/listings/constants";
 import type { Listing, ListingType, TimeFilter } from "@/features/listings/types";
-
-type TagRow = {
-  tag: string;
-  listings: Listing[];
-};
 
 type BrowseFiltersProps = {
   tags: string[];
-  tagRows: TagRow[];
+  events: Listing[];
+  deals: Listing[];
   query?: string;
 };
 
 const ALL_TAG = "All";
 
-export function BrowseFilters({ tags, tagRows, query = "" }: BrowseFiltersProps) {
+function isSchoolTag(tag: string): boolean {
+  return (SCHOOL_FILTER_TAGS as readonly string[]).includes(tag);
+}
+
+export function BrowseFilters({ tags, events, deals, query = "" }: BrowseFiltersProps) {
   const [tag, setTag] = useState(ALL_TAG);
   const [listingType, setListingType] = useState("all");
   const [time, setTime] = useState<TimeFilter | "all">("all");
@@ -30,6 +33,8 @@ export function BrowseFilters({ tags, tagRows, query = "" }: BrowseFiltersProps)
   const [isPending, startTransition] = useTransition();
 
   const isFiltered = tag !== ALL_TAG || listingType !== "all" || time !== "all" || query !== "";
+  const pillActive = isSchoolTag(tag) ? "" : tag;
+  const schoolValue = isSchoolTag(tag) ? tag : "all";
 
   useEffect(() => {
     if (!isFiltered) return;
@@ -45,10 +50,19 @@ export function BrowseFilters({ tags, tagRows, query = "" }: BrowseFiltersProps)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tag, listingType, time, query]);
 
+  function handlePillSelect(value: string) {
+    setTag(value);
+  }
+
+  function handleSchoolSelect(value: string) {
+    setTag(value === "all" ? ALL_TAG : value);
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-2 px-4 sm:px-6">
-        <TagPills tags={tags} active={tag} onSelect={setTag} />
+        <TagPills tags={tags} active={pillActive} onSelect={handlePillSelect} />
+        <SchoolFilterSelect value={schoolValue} onChange={handleSchoolSelect} />
         <FilterSheet
           listingType={listingType}
           time={time}
@@ -76,16 +90,25 @@ export function BrowseFilters({ tags, tagRows, query = "" }: BrowseFiltersProps)
           </motion.div>
         ) : (
           <motion.div
-            key="rows"
+            key="sections"
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
             transition={{ duration: 0.22, ease: "easeOut" }}
             className="space-y-10"
           >
-            {tagRows.map(({ tag: t, listings }) => (
-              <ListingRow key={t} title={t} listings={listings} onSeeAll={() => setTag(t)} />
-            ))}
+            {events.length > 0 ? (
+              <ListingRow
+                title="Upcoming Events"
+                listings={events}
+                onSeeAll={() => setTag("Events")}
+              />
+            ) : null}
+            {deals.length > 0 ? (
+              <ListingSection title="Student Deals" onSeeAll={() => setTag("Deals")}>
+                <ListingGrid listings={deals} />
+              </ListingSection>
+            ) : null}
           </motion.div>
         )}
       </AnimatePresence>

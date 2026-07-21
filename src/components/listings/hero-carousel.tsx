@@ -3,12 +3,9 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowSquareOut, CaretLeft, CaretRight } from "@phosphor-icons/react";
-import { GlassSurface } from "@/components/glass/glass-surface";
+import { CaretLeft, CaretRight } from "@phosphor-icons/react";
 import { TooltipButton } from "@/components/ui/tooltip-button";
 import { ListingDetailModal } from "./listing-detail-modal";
-import { EstablishmentIcon } from "./establishment-icon";
-import { getTimeBadge } from "@/features/listings/utils";
 import type { Listing } from "@/features/listings/types";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +31,6 @@ export function HeroCarousel({ listings }: HeroCarouselProps) {
 
   const listing = listings[index];
   const mediaLayoutId = `hero-media-${listing.id}`;
-  const timeBadge = getTimeBadge(listing);
 
   function goTo(next: number) {
     setIndex((next + listings.length) % listings.length);
@@ -71,71 +67,50 @@ export function HeroCarousel({ listings }: HeroCarouselProps) {
                 className="object-cover"
               />
             </motion.div>
-            <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/10" />
 
-            <div className="absolute inset-x-0 bottom-0 flex flex-col">
-              {listings.length > 1 && (
-                <div className="flex items-center justify-center gap-1.5 pb-3">
-                  {listings.map((l, i) => (
-                    <button
-                      key={l.id}
-                      type="button"
-                      aria-label={`Go to slide ${i + 1}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        goTo(i);
-                      }}
-                      className={cn(
-                        "relative h-1.5 overflow-hidden rounded-full bg-white/30 transition-[width]",
-                        i === index ? "w-8" : "w-1.5",
-                      )}
-                    >
-                      {i === index && (
-                        <motion.span
-                          key={`${listing.id}-progress`}
-                          className="absolute inset-y-0 left-0 rounded-full bg-white"
-                          initial={{ width: "0%" }}
-                          animate={{ width: "100%" }}
-                          transition={{ duration: AUTO_ROTATE_MS / 1000, ease: "linear" }}
-                        />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              <GlassSurface
-                tone="dark"
-                cornerRadius={0}
-                padding="1.25rem 1.25rem"
-                className="flex w-full flex-col gap-3"
-              >
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full bg-primary px-2.5 py-1 text-xs font-semibold text-primary-foreground">
-                    {timeBadge}
-                  </span>
-                  <span className="flex items-center gap-1.5 rounded-full bg-white/15 px-2.5 py-1 text-xs font-medium text-white">
-                    {listing.establishment_id && (
-                      <EstablishmentIcon id={listing.establishment_id} className="size-3.5 rounded-sm" />
+            {listings.length > 1 && (
+              <div className="absolute inset-x-0 top-4 z-10 flex items-center justify-center gap-1.5">
+                {listings.map((l, i) => (
+                  <button
+                    key={l.id}
+                    type="button"
+                    aria-label={`Go to slide ${i + 1}`}
+                    aria-current={i === index ? "true" : undefined}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      goTo(i);
+                    }}
+                    className={cn(
+                      "relative h-2 overflow-hidden rounded-full bg-white/30 transition-[width]",
+                      i === index ? "w-10" : "w-2",
                     )}
-                    {listing.establishment_name}
-                  </span>
-                </div>
-                <h2 className="text-xl font-semibold text-balance text-white sm:text-2xl">
-                  {listing.title}
-                </h2>
-                <a
-                  href={listing.source_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="mt-1 inline-flex w-fit items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-                >
-                  {listing.cta_label || "Open Link"}
-                  <ArrowSquareOut className="size-4" aria-hidden />
-                  <span className="sr-only">(opens in a new tab)</span>
-                </a>
-              </GlassSurface>
+                  >
+                    {i === index && (
+                      <motion.span
+                        key={`${listing.id}-progress`}
+                        className="absolute inset-y-0 left-0 rounded-full bg-white"
+                        initial={{ width: "0%" }}
+                        animate={{ width: "100%" }}
+                        transition={{ duration: AUTO_ROTATE_MS / 1000, ease: "linear" }}
+                      />
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div className="absolute inset-x-0 bottom-0">
+              <div
+                aria-hidden
+                className="absolute inset-0 backdrop-blur-md [mask-image:linear-gradient(to_top,black_50%,transparent)]"
+              />
+              <div
+                aria-hidden
+                className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent"
+              />
+              <h2 className="relative truncate px-4 pb-4 pt-14 text-xl font-semibold text-white sm:px-5 sm:pb-5 sm:text-2xl">
+                {listing.title}
+              </h2>
             </div>
           </motion.div>
         </AnimatePresence>

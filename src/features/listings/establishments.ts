@@ -29,26 +29,44 @@ export const SCHOOL_ESTABLISHMENTS: Establishment[] = [
 
 // Curated brand slugs, verified present in the installed simple-icons
 // package. Rendered via /api/establishment-icon (resolves the colored SVG
-// server-side so simple-icons is never bundled to the client). Add more
-// entries here as needed — just confirm the slug exists in simple-icons first.
+// server-side so simple-icons is never bundled to the client). Each `id`
+// must match the `establishment_id` stored on listings.
 export const BRAND_ESTABLISHMENTS: Establishment[] = [
-  { id: "starbucks", name: "Starbucks", icon: { kind: "brand", slug: "starbucks" } },
-  { id: "mcdonalds", name: "McDonald's", icon: { kind: "brand", slug: "mcdonalds" } },
-  { id: "kfc", name: "KFC", icon: { kind: "brand", slug: "kfc" } },
-  { id: "doordash", name: "DoorDash", icon: { kind: "brand", slug: "doordash" } },
-  { id: "ubereats", name: "Uber Eats", icon: { kind: "brand", slug: "ubereats" } },
+  { id: "applemusic", name: "Apple Music", icon: { kind: "brand", slug: "applemusic" } },
   { id: "airbnb", name: "Airbnb", icon: { kind: "brand", slug: "airbnb" } },
-  { id: "shopify", name: "Shopify", icon: { kind: "brand", slug: "shopify" } },
-  { id: "instagram", name: "Instagram", icon: { kind: "brand", slug: "instagram" } },
-  { id: "facebook", name: "Facebook", icon: { kind: "brand", slug: "facebook" } },
-  { id: "x", name: "X (Twitter)", icon: { kind: "brand", slug: "x" } },
-  { id: "snapchat", name: "Snapchat", icon: { kind: "brand", slug: "snapchat" } },
+  { id: "autodesk", name: "Autodesk", icon: { kind: "brand", slug: "autodesk" } },
+  { id: "chessdotcom", name: "Chess.com", icon: { kind: "brand", slug: "chessdotcom" } },
+  { id: "datacamp", name: "DataCamp", icon: { kind: "brand", slug: "datacamp" } },
   { id: "discord", name: "Discord", icon: { kind: "brand", slug: "discord" } },
-  { id: "spotify", name: "Spotify", icon: { kind: "brand", slug: "spotify" } },
-  { id: "tiktok", name: "TikTok", icon: { kind: "brand", slug: "tiktok" } },
-  { id: "youtube", name: "YouTube", icon: { kind: "brand", slug: "youtube" } },
-  { id: "twitch", name: "Twitch", icon: { kind: "brand", slug: "twitch" } },
+  { id: "doordash", name: "DoorDash", icon: { kind: "brand", slug: "doordash" } },
+  { id: "evernote", name: "Evernote", icon: { kind: "brand", slug: "evernote" } },
+  { id: "facebook", name: "Facebook", icon: { kind: "brand", slug: "facebook" } },
+  { id: "figma", name: "Figma", icon: { kind: "brand", slug: "figma" } },
+  { id: "github", name: "GitHub", icon: { kind: "brand", slug: "github" } },
+  { id: "headspace", name: "Headspace", icon: { kind: "brand", slug: "headspace" } },
+  { id: "hp", name: "HP", icon: { kind: "brand", slug: "hp" } },
+  { id: "instagram", name: "Instagram", icon: { kind: "brand", slug: "instagram" } },
+  { id: "kfc", name: "KFC", icon: { kind: "brand", slug: "kfc" } },
+  { id: "mcdonalds", name: "McDonald's", icon: { kind: "brand", slug: "mcdonalds" } },
+  { id: "medium", name: "Medium", icon: { kind: "brand", slug: "medium" } },
+  { id: "namecheap", name: "Namecheap", icon: { kind: "brand", slug: "namecheap" } },
   { id: "netflix", name: "Netflix", icon: { kind: "brand", slug: "netflix" } },
+  { id: "nordvpn", name: "NordVPN", icon: { kind: "brand", slug: "nordvpn" } },
+  { id: "notion", name: "Notion", icon: { kind: "brand", slug: "notion" } },
+  { id: "protonvpn", name: "Proton VPN", icon: { kind: "brand", slug: "protonvpn" } },
+  { id: "quizlet", name: "Quizlet", icon: { kind: "brand", slug: "quizlet" } },
+  { id: "rakutenkobo", name: "Rakuten Kobo", icon: { kind: "brand", slug: "rakutenkobo" } },
+  { id: "shopify", name: "Shopify", icon: { kind: "brand", slug: "shopify" } },
+  { id: "skillshare", name: "Skillshare", icon: { kind: "brand", slug: "skillshare" } },
+  { id: "snapchat", name: "Snapchat", icon: { kind: "brand", slug: "snapchat" } },
+  { id: "spotify", name: "Spotify", icon: { kind: "brand", slug: "spotify" } },
+  { id: "squarespace", name: "Squarespace", icon: { kind: "brand", slug: "squarespace" } },
+  { id: "starbucks", name: "Starbucks", icon: { kind: "brand", slug: "starbucks" } },
+  { id: "tiktok", name: "TikTok", icon: { kind: "brand", slug: "tiktok" } },
+  { id: "twitch", name: "Twitch", icon: { kind: "brand", slug: "twitch" } },
+  { id: "ubereats", name: "Uber Eats", icon: { kind: "brand", slug: "ubereats" } },
+  { id: "x", name: "X (Twitter)", icon: { kind: "brand", slug: "x" } },
+  { id: "youtube", name: "YouTube", icon: { kind: "brand", slug: "youtube" } },
 ];
 
 export const ALL_ESTABLISHMENTS: Establishment[] = [
@@ -59,6 +77,17 @@ export const ALL_ESTABLISHMENTS: Establishment[] = [
 export function getEstablishment(id: string | null | undefined): Establishment | undefined {
   if (!id) return undefined;
   return ALL_ESTABLISHMENTS.find((e) => e.id === id);
+}
+
+/** Maps listing tag names to establishment ids for school crests. */
+export const SCHOOL_TAG_TO_ESTABLISHMENT_ID: Record<string, string> = {
+  Carleton: "carleton",
+  uOttawa: "uottawa",
+  Algonquin: "algonquin",
+};
+
+export function getSchoolEstablishmentId(tag: string): string | undefined {
+  return SCHOOL_TAG_TO_ESTABLISHMENT_ID[tag];
 }
 
 export function establishmentIconUrl(icon: EstablishmentIconSource): string {

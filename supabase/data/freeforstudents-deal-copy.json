@@ -1,0 +1,172 @@
+{
+  "prime-student-us": {
+    "description": "Prime Student includes 6 months of Amazon Prime free, then 50% off. Get fast shipping, Prime Video, exclusive deals, and 5% back on select purchases with an eligible Prime Visa card.",
+    "tags": ["Deals", "Online"]
+  },
+  "proton-vpn-70pc": {
+    "description": "Students save 70% on Proton VPN, a Swiss-based service with a strict no-logs policy. Connect through 140+ countries, access blocked content, and stay private on campus Wi‑Fi or abroad.",
+    "tags": ["Deals", "Online"]
+  },
+  "prime-video-us": {
+    "description": "Prime Student members can stream Prime Video free for 6 months. Watch movies, series, and Amazon Originals on your laptop, phone, or TV.",
+    "tags": ["Deals", "Online"]
+  },
+  "grubhub-prime": {
+    "description": "Prime members get Grubhub+ free for 6 months with $0 delivery on eligible orders from thousands of restaurants. A solid perk for late-night study sessions.",
+    "tags": ["Deals", "Online"]
+  },
+  "apple-music-student": {
+    "description": "Students get Apple Music for half price and Apple TV+ included free. Verify enrollment to unlock the discounted rate for up to 48 months.",
+    "tags": ["Deals", "Online"]
+  },
+  "nordvpn-69pc": {
+    "description": "Save 69% on NordVPN plus get 3 extra months free. Secure your connection on campus Wi‑Fi, dorm networks, and public hotspots.",
+    "tags": ["Deals", "Online"]
+  },
+  "fizz-app": {
+    "description": "Mine helps students build credit and manage everyday spending without hidden fees. Built for college students who want to establish credit responsibly.",
+    "tags": ["Deals", "Online"]
+  },
+  "calm-prime-student": {
+    "description": "Try Calm free for 30 days, then continue for $3.50/month as a student. Access guided meditations, sleep stories, and stress-relief tools between classes.",
+    "tags": ["Deals", "Online"]
+  },
+  "aws-educate": {
+    "description": "AWS Educate offers free, self-paced cloud training and hands-on labs. Learn in-demand skills in cloud computing and AI with practice using services like S3 and EC2.",
+    "tags": ["Deals", "Online"]
+  },
+  "ynab-college": {
+    "description": "College students get one free year of YNAB (You Need A Budget). Track spending, plan ahead, and build better money habits—verify with a student ID, transcript, or tuition statement.",
+    "tags": ["Deals", "Online"]
+  },
+  "datacamp-student-50pc": {
+    "description": "Students save 50% on DataCamp. Access interactive courses in data science, Python, R, SQL, and AI to build job-ready skills at your own pace.",
+    "tags": ["Deals", "Online"]
+  },
+  "namecheap": {
+    "description": "Students can claim a free .me domain and discounts on other domains through Namecheap's education hub. Great for portfolios, side projects, and personal sites.",
+    "tags": ["Deals", "Online"]
+  },
+  "skillshare-30pc-annual": {
+    "description": "Get 30% off an annual Skillshare membership. Explore thousands of classes in design, video, marketing, illustration, and more.",
+    "tags": ["Deals", "Online"]
+  },
+  "squarespace-50pc": {
+    "description": "Students save 50% on the first year of Squarespace. Build a portfolio, blog, or project site with professional templates and drag-and-drop editing.",
+    "tags": ["Deals", "Online"]
+  },
+  "airalo-15pc": {
+    "description": "Save 15% on Airalo eSIMs for international travel. Stay connected abroad without swapping SIM cards or paying expensive roaming fees.",
+    "tags": ["Deals", "Online"]
+  },
+  "autodesk-edu-access": {
+    "description": "Students and educators get free access to Autodesk design software including AutoCAD, Fusion 360, and Maya. Verify student status annually to keep access.",
+    "tags": ["Deals", "Online"]
+  },
+  "hulu-199": {
+    "description": "College students get Hulu (With Ads) for $1.99/month while enrolled—about 83% off the regular price. Verify through SheerID; cancel anytime.",
+    "tags": ["Deals", "Online"]
+  },
+  "figma-education-plan": {
+    "description": "Figma and FigJam are free for students and educators. Design, prototype, and collaborate in real time—plus Dev Mode for learning how designs translate to code.",
+    "tags": ["Deals", "Online"]
+  },
+  "headspace-student-plan": {
+    "description": "Students save 85% on Headspace. Access meditation, sleep, and mindfulness tools to manage stress and burnout during the semester.",
+    "tags": ["Deals", "Online"]
+  },
+  "free-msft-365": {
+    "description": "Eligible students get Microsoft 365 apps—Word, Excel, PowerPoint, and OneNote—free with a valid school email. Sign in with your institutional account to get started.",
+    "tags": ["Deals", "Online"],
+    "source_url": "https://www.microsoft.com/en-us/education/products/office"
+  },
+  "evernote-40pc-professional": {
+    "description": "Students save 40% on Evernote Professional. Organize lecture notes, assignments, and group projects in one searchable workspace across all your devices.",
+    "tags": ["Deals", "Online"]
+  },
+  "lingvist-50pc": {
+    "description": "Students save 50% on Lingvist. Learn vocabulary in context with short, focused sessions designed to help you pick up a new language faster.",
+    "tags": ["Deals", "Online"]
+  },
+  "quizlet-plus": {
+    "description": "Try Quizlet Plus free for 7 days. Unlock ad-free studying, offline mode, and advanced learning tools to prep for exams and quizzes.",
+    "tags": ["Deals", "Online"]
+  },
+  "free-resume-builder": {
+    "description": "Kickresume offers students up to 180 days of Premium free. Build ATS-friendly resumes and cover letters—verify with ISIC, ITIC, or UNiDAYS.",
+    "tags": ["Deals", "Online"]
+  },
+  "blinkist-premium-25pc": {
+    "description": "Students save 25% on Blinkist Premium. Get key insights from thousands of nonfiction books and podcasts in about 15 minutes.",
+    "tags": ["Deals", "Online"]
+  },
+  "craft-for-education": {
+    "description": "Craft gives students a free note-taking app with offline support, course organization, and collaboration. Ideal for lectures, research, and group projects.",
+    "tags": ["Deals", "Online"]
+  },
+  "medium-25pc": {
+    "description": "Students save 25% on a one-year Medium membership. Read unlimited stories from writers across tech, culture, business, and more.",
+    "tags": ["Deals", "Online"]
+  },
+  "peacock-66pc": {
+    "description": "Students save 66% on Peacock streaming. Watch movies, TV, and live sports—stream on 3 devices and create up to 6 profiles.",
+    "tags": ["Deals", "Online"]
+  },
+  "jotform-edu": {
+    "description": "Jotform offers students unlimited survey submissions on its free education plan. Build custom forms for research, clubs, events, and class projects.",
+    "tags": ["Deals", "Online"]
+  },
+  "canva-free": {
+    "description": "Canva for Education is free for students. Create presentations, posters, social graphics, and more with thousands of templates and design tools.",
+    "tags": ["Deals", "Online"]
+  },
+  "rakuten-kobo-30pc": {
+    "description": "Students save 30% on select Kobo eBooks and audiobooks. Verify student status to browse discounted titles for class and leisure reading.",
+    "tags": ["Deals", "Online"]
+  },
+  "notion-edu": {
+    "description": "Notion for Education is free for students. Organize classes, clubs, internships, and side projects in one flexible workspace.",
+    "tags": ["Deals", "Online"]
+  },
+  "45pc-myprotein": {
+    "description": "Students get 45% off plus free shipping at MYPROTEIN with code MYPBEANS. Stock up on protein, snacks, and wellness supplements.",
+    "tags": ["Deals", "Online"]
+  },
+  "azure-for-students": {
+    "description": "Students receive $100 in Azure credit plus free access to popular cloud services. Build apps, host projects, and experiment with cloud tools at no cost.",
+    "tags": ["Deals", "Online"],
+    "source_url": "https://azure.microsoft.com/en-us/free/students/"
+  },
+  "40pc-hp-student": {
+    "description": "Students save up to 40% on HP laptops, printers, and accessories. Verify enrollment to access education pricing on back-to-school tech.",
+    "tags": ["Deals", "Online"]
+  },
+  "logitech-bts-24": {
+    "description": "Save up to $50 on Logitech back-to-school gear. Keyboards, mice, webcams, and headsets for your dorm desk or home setup.",
+    "tags": ["Deals", "Online"]
+  },
+  "25pc-chegg-study": {
+    "description": "New Chegg Study subscribers save 25% on the first month. Get step-by-step textbook solutions and expert Q&A for tough assignments.",
+    "tags": ["Deals", "Online"]
+  },
+  "fotor-free": {
+    "description": "Fotor offers free online photo editing for students. Touch up images, remove backgrounds, and create graphics for projects and social media.",
+    "tags": ["Deals", "Online"]
+  },
+  "21pc-nutribullet": {
+    "description": "Save 21% on nutribullet blenders. Quick smoothies and shakes for busy mornings between classes and late study nights.",
+    "tags": ["Deals", "Online"]
+  },
+  "lucidchart-edu": {
+    "description": "Students and educators get free Lucidchart Education accounts. Create flowcharts, diagrams, and process maps with real-time collaboration.",
+    "tags": ["Deals", "Online"]
+  },
+  "chegg-books": {
+    "description": "Save up to 90% on textbooks with Chegg. Rent or buy used books and eTextbooks instead of paying full campus bookstore prices.",
+    "tags": ["Deals", "Online"]
+  },
+  "chess-com-50pc-premium": {
+    "description": "Students save 50% on any Chess.com Premium plan. Verify with UNiDAYS to unlock unlimited puzzles, lessons, game review, and ad-free play.",
+    "tags": ["Deals", "Online"]
+  }
+}

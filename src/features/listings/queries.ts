@@ -1,6 +1,12 @@
 import { createClient as createServerSupabaseClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { ON_CAMPUS_FILTER, SCHOOL_TAGS } from "./constants";
 import type { Listing, ListingFilters } from "./types";
+
+function isOnCampusListing(listing: Listing): boolean {
+  if (listing.location?.trim()) return true;
+  return listing.tags.some((tag) => (SCHOOL_TAGS as readonly string[]).includes(tag));
+}
 
 const PUBLIC_COLUMNS = "*";
 
@@ -63,7 +69,7 @@ async function fetchPublishedListings(filters: Pick<ListingFilters, "tag" | "lis
     .eq("status", "published")
     .or(`ends_at.is.null,ends_at.gt.${new Date().toISOString()}`);
 
-  if (filters.tag && filters.tag !== "all") {
+  if (filters.tag && filters.tag !== "all" && filters.tag !== ON_CAMPUS_FILTER) {
     query = query.overlaps("tags", [filters.tag]);
   }
   if (filters.listingType && filters.listingType !== "all") {
@@ -80,7 +86,8 @@ export async function getPublicListings(filters: ListingFilters): Promise<Listin
   const listings = await fetchPublishedListings(filters);
   return listings
     .filter((listing) => matchesSearch(listing, filters.q ?? ""))
-    .filter((listing) => matchesTime(listing, filters.time));
+    .filter((listing) => matchesTime(listing, filters.time))
+    .filter((listing) => filters.tag !== ON_CAMPUS_FILTER || isOnCampusListing(listing));
 }
 
 export async function getHeroListings(limit = 6): Promise<Listing[]> {
@@ -93,6 +100,24 @@ export async function getHeroListings(limit = 6): Promise<Listing[]> {
 export async function getListingsForTag(tag: string, limit = 12): Promise<Listing[]> {
   const listings = await fetchPublishedListings({ tag });
   return listings.slice(0, limit);
+}
+
+function sortEventsByDate(listings: Listing[]): Listing[] {
+  return [...listings].sort((a, b) => {
+    if (!a.starts_at && !b.starts_at) return 0;
+    if (!a.starts_at) return 1;
+    if (!b.starts_at) return -1;
+    return new Date(a.starts_at).getTime() - new Date(b.starts_at).getTime();
+  });
+}
+
+export async function getEventListings(limit = 12): Promise<Listing[]> {
+  const listings = await fetchPublishedListings({ listingType: "event" });
+  return sortEventsByDate(listings).slice(0, limit);
+}
+
+export async function getDealListings(): Promise<Listing[]> {
+  return fetchPublishedListings({ listingType: "deal" });
 }
 
 // ---------------------------------------------------------------------------

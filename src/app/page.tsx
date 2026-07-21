@@ -1,6 +1,6 @@
 import { HomeShell } from "@/components/site/home-shell";
-import { BROWSE_FILTER_TAGS, INITIAL_TAGS } from "@/features/listings/constants";
-import { getHeroListings, getListingsForTag } from "@/features/listings/queries";
+import { BROWSE_FILTER_TAGS } from "@/features/listings/constants";
+import { getDealListings, getEventListings, getHeroListings } from "@/features/listings/queries";
 
 // Fetches live listings on every request — publishing/editing in the admin
 // should show up immediately without waiting on a redeploy. Also avoids
@@ -9,15 +9,11 @@ import { getHeroListings, getListingsForTag } from "@/features/listings/queries"
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [hero, tagRows] = await Promise.all([
+  const [hero, events, deals] = await Promise.all([
     getHeroListings(),
-    Promise.all(
-      INITIAL_TAGS.map(async (tag) => ({
-        tag,
-        listings: await getListingsForTag(tag),
-      })),
-    ),
+    getEventListings(),
+    getDealListings(),
   ]);
 
-  return <HomeShell hero={hero} tags={BROWSE_FILTER_TAGS} tagRows={tagRows} />;
+  return <HomeShell hero={hero} tags={BROWSE_FILTER_TAGS} events={events} deals={deals} />;
 }

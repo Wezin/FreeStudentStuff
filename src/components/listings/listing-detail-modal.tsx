@@ -6,6 +6,7 @@ import { ArrowSquareOut, CalendarBlank, MapPin, Buildings } from "@phosphor-icon
 import {
   Dialog,
   DialogContent,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogDescription,
@@ -48,10 +49,11 @@ export function ListingDetailModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[90vh] !animate-none gap-0 overflow-y-auto border-border bg-popover p-0 sm:max-w-lg">
+      <DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden border-border bg-popover p-0 sm:max-w-lg !animate-none">
         <motion.div
+          layout
           layoutId={mediaLayoutId}
-          className="relative aspect-video w-full overflow-hidden rounded-t-xl bg-muted"
+          className="relative aspect-video w-full shrink-0 overflow-hidden rounded-t-xl bg-muted"
         >
           <Image
             src={listing.thumbnail_url}
@@ -62,75 +64,78 @@ export function ListingDetailModal({
           />
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          className="space-y-4 p-6"
-        >
-          <DialogHeader className="space-y-2 text-left">
-            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-2">
-              <Badge variant="secondary">{listingTypeLabel(listing.listing_type)}</Badge>
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <DialogTitle className="text-xl font-semibold text-balance">
-                {listing.title}
-              </DialogTitle>
-            </motion.div>
-            <motion.div variants={itemVariants}>
-              <DialogDescription className="whitespace-pre-line text-sm text-muted-foreground">
-                {listing.description}
-              </DialogDescription>
-            </motion.div>
-          </DialogHeader>
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="space-y-4 p-6"
+          >
+            <DialogHeader className="space-y-2 text-left">
+              <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-2">
+                <Badge variant="secondary">{listingTypeLabel(listing.listing_type)}</Badge>
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <DialogTitle className="text-xl leading-snug font-semibold text-balance">
+                  {listing.title}
+                </DialogTitle>
+              </motion.div>
+              <motion.div variants={itemVariants}>
+                <DialogDescription className="whitespace-pre-line text-sm text-muted-foreground">
+                  {listing.description}
+                </DialogDescription>
+              </motion.div>
+            </DialogHeader>
 
-          <motion.div variants={itemVariants} className="space-y-2 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              {listing.establishment_id ? (
-                <EstablishmentIcon id={listing.establishment_id} className="size-4 shrink-0 rounded-sm" />
-              ) : (
-                <Buildings className="size-4 shrink-0" />
+            <motion.div variants={itemVariants} className="space-y-2 text-sm text-muted-foreground">
+              <div className="flex items-center gap-2">
+                {listing.establishment_id ? (
+                  <EstablishmentIcon id={listing.establishment_id} className="size-4 shrink-0 rounded-sm" />
+                ) : (
+                  <Buildings className="size-4 shrink-0" />
+                )}
+                <span>{listing.establishment_name}</span>
+              </div>
+              {listing.location && (
+                <div className="flex items-center gap-2">
+                  <MapPin className="size-4 shrink-0" />
+                  <span>{listing.location}</span>
+                </div>
               )}
-              <span>{listing.establishment_name}</span>
-            </div>
-            {listing.location && (
-              <div className="flex items-center gap-2">
-                <MapPin className="size-4 shrink-0" />
-                <span>{listing.location}</span>
-              </div>
-            )}
-            {listing.listing_type === "event" && (startsLabel || endsLabel) && (
-              <div className="flex items-center gap-2">
-                <CalendarBlank className="size-4 shrink-0" />
-                <span>
-                  {startsLabel}
-                  {endsLabel ? ` – ${endsLabel}` : ""}
-                </span>
-              </div>
-            )}
-            {listing.listing_type === "deal" && endsLabel && (
-              <div className="flex items-center gap-2">
-                <CalendarBlank className="size-4 shrink-0" />
-                <span>Deadline: {endsLabel}</span>
-              </div>
+              {listing.listing_type === "event" && (startsLabel || endsLabel) && (
+                <div className="flex items-center gap-2">
+                  <CalendarBlank className="size-4 shrink-0" />
+                  <span>
+                    {startsLabel}
+                    {endsLabel ? ` – ${endsLabel}` : ""}
+                  </span>
+                </div>
+              )}
+              {listing.listing_type === "deal" && endsLabel && (
+                <div className="flex items-center gap-2">
+                  <CalendarBlank className="size-4 shrink-0" />
+                  <span>Deadline: {endsLabel}</span>
+                </div>
+              )}
+            </motion.div>
+
+            {listing.tags.length > 0 && (
+              <motion.div variants={itemVariants} className="flex flex-wrap gap-1.5">
+                {listing.tags.map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full bg-foreground/5 px-2.5 py-1 text-xs text-muted-foreground"
+                  >
+                    #{tag}
+                  </span>
+                ))}
+              </motion.div>
             )}
           </motion.div>
+        </div>
 
-          {listing.tags.length > 0 && (
-            <motion.div variants={itemVariants} className="flex flex-wrap gap-1.5">
-              {listing.tags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full bg-foreground/5 px-2.5 py-1 text-xs text-muted-foreground"
-                >
-                  #{tag}
-                </span>
-              ))}
-            </motion.div>
-          )}
-
-          <motion.a
-            variants={itemVariants}
+        <DialogFooter className="mx-0 mb-0 shrink-0 rounded-b-xl border-t border-border bg-popover p-4">
+          <a
             href={listing.source_url}
             target="_blank"
             rel="noopener noreferrer"
@@ -139,8 +144,8 @@ export function ListingDetailModal({
             {listing.cta_label || "Open Link"}
             <ArrowSquareOut className="size-4" aria-hidden />
             <span className="sr-only">(opens in a new tab)</span>
-          </motion.a>
-        </motion.div>
+          </a>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

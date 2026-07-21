@@ -7,7 +7,7 @@ export default function Loading() {
       <Skeleton className="aspect-[16/9] w-full rounded-3xl" />
       <div className="flex gap-3 overflow-hidden">
         {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-64 w-60 shrink-0 rounded-3xl" />
+          <Skeleton key={i} className="h-72 w-60 shrink-0 rounded-xl" />
         ))}
       </div>
     </div>
